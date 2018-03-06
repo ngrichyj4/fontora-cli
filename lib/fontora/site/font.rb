@@ -36,8 +36,8 @@ module Fontora
     return [] unless at_rules.present?
     functions = at_rules.map{|at_rule| at_rule[:block].find_all {|rule| rule[:node] == :function && rule[:name] == 'url' } }.flatten
     block_uris = at_rules.map{|at_rule| at_rule[:block].find_all {|rule| rule[:node] == :url } }.flatten
-    urls = block_uris.map{|node| absolute_uri node[:value]  }
-    urls.concat functions.map {|func| func[:value].map {|node| absolute_uri node[:value] }}.flatten
+    urls = block_uris.map{|node| absolute_uri node[:value]  }.compact
+    urls.concat functions.map {|func| func[:value].map {|node| absolute_uri node[:value] }}.flatten.compact
     # urls.flatten.uniq.map {|font| future.get_font_info font }
     urls.flatten.uniq.map {|font| crawler.parser.future.get_font_info font, @host, @source, @root_uri }
    end
@@ -47,7 +47,7 @@ module Fontora
    end
 
    def absolute_uri path
-    @source ? URI.join(@source, path) : path
+    @source ? URI.join(@source, path) : path rescue nil
    end
 
    def get_source font_uri
