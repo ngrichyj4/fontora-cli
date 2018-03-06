@@ -13,7 +13,7 @@ module Fontora
     options.merge! css:     CSS.pool(size: options[:css] || 10)
     options.merge! parser:  Parser.pool(size: options[:parser] || 10)
     options.merge! font:    Font.pool(size: options[:font] || 10)
-    options.merge! font_info: options[:font_info] || true
+    options.merge! font_info: options[:font_info].nil? ? true : options[:font_info]
    end
 
    module_function :scrape, :default_options
