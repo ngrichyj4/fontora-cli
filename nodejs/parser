@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+var fs = require('fs');
+var opentype = require('opentype/src/opentype.js')
+var parser = require('woff2-parser');
+var response = {};
+var file = process.argv[2];
+
+// Read file and parse
+fs.readFile(file, function (err, data) {
+ // Use woff2-parser.js
+ parser(data).then(function (result) {
+  response['parser'] = result.name;
+  console.log(JSON.stringify(response));
+ }).catch(error => { 
+
+  // Use opentype.js
+  try {
+   var font = opentype.parse(data);
+   response['parser'] = font.tables.name;
+   console.log(JSON.stringify(response));
+  } catch(ex){
+   console.log({})
+  }
+
+ });
+ 
+});
+

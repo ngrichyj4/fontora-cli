@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+var fs = require('fs');
+var opentype = require('opentype/src/opentype.js')
+var parser = require('woff2-parser');
+var response = {};
+var data = "";
+var buffer= null;
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
+process.stdin.on('data', function(chunk) {
+  data += chunk;
+});
+
+process.stdin.on('end', function() {
+ try{ buffer = Buffer.from(data, 'hex');  }catch(e){ }
+ parser(buffer).then(function (result) {
+  response['parser'] = result.name;
+  console.log(JSON.stringify(response));
+ }).catch(error => { 
+  // Use opentype.js
+  try {
+   var font = opentype.parse(buffer);
+   response['parser'] = font.tables.name;
+   console.log(JSON.stringify(response));
+  } catch(ex){
+   console.log({})
+  }
+
+ });
+});
